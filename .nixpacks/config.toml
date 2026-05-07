@@ -1,0 +1,17 @@
+[phases.setup]
+nixPkgs = ["nodejs_24", "npm-8_x"]
+
+[phases.install]
+cmds = ["cd backend && npm ci"]
+
+[phases.build]
+cmds = ["cd backend && npm run db:sync"]
+
+[start]
+cmd = "cd backend && npm start"
+
+[healthcheck]
+path = "/health"
+interval = "30s"
+timeout = "10s"
+retries = 3
