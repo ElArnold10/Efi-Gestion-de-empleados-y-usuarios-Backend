@@ -1,0 +1,26 @@
+{
+  "name": "backend-sistema-gestion-usuarios",
+  "version": "1.0.0",
+  "description": "Sistema de Gestión de Empleados y Usuarios - Backend",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "build": "cd backend && npm install",
+    "dev": "cd backend && npm run dev",
+    "test": "cd backend && npm test"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "mysql",
+    "sequelize",
+    "jwt",
+    "api",
+    "railway"
+  ],
+  "author": "Sistema de Gestión",
+  "license": "ISC"
+}
