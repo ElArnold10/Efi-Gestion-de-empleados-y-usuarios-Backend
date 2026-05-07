@@ -29,14 +29,33 @@ const waitForDatabase = async (maxRetries = 10, delay = 5000) => {
     
     // Parsear MYSQL_URL para obtener componentes
     try {
-      const parsed = new URL(process.env.MYSQL_URL);
+      const mysqlUrl = process.env.MYSQL_URL;
+      console.log('🔍 MYSQL_URL completa:', mysqlUrl);
+      
+      if (!mysqlUrl || mysqlUrl.trim() === '') {
+        throw new Error('MYSQL_URL está vacía o no definida');
+      }
+      
+      const parsed = new URL(mysqlUrl);
       dbHost = parsed.hostname;
       dbPort = parsed.port || 3306;
       dbName = parsed.pathname.substring(1);
       dbUser = parsed.username;
       dbPassword = parsed.password;
+      
+      console.log('✅ Componentes parseados:');
+      console.log('  Host:', dbHost);
+      console.log('  Port:', dbPort);
+      console.log('  Database:', dbName);
+      console.log('  User:', dbUser);
+      console.log('  Password:', dbPassword ? '***CONFIGURADO***' : 'NO DEFINIDO');
+      
     } catch (error) {
-      throw new Error('❌ Error al parsear MYSQL_URL: ' + error.message);
+      console.log('❌ Error detallado al parsear MYSQL_URL:');
+      console.log('  URL recibida:', process.env.MYSQL_URL);
+      console.log('  Error:', error.message);
+      console.log('  Código error:', error.code);
+      throw new Error('❌ Error al parsear MYSQL_URL: ' + error.message + ' | URL: ' + process.env.MYSQL_URL);
     }
   } else {
     // Usar variables de entorno individuales
