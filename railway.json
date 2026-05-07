@@ -4,6 +4,6 @@
   },
   "deploy": {
     "startCommand": "cd backend && npm start",
-    "healthcheckPath": "/api/health"
+    "healthcheckPath": "/health"
   }
 }
