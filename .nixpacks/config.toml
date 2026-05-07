@@ -5,7 +5,10 @@ nixPkgs = ["nodejs_24", "npm-8_x"]
 cmds = ["cd backend && npm ci"]
 
 [phases.build]
-cmds = ["cd backend && npm run db:sync"]
+cmds = [
+  "cp ../sistema_horarios.sql backend/ 2>/dev/null || echo 'SQL file not found, continuing...'",
+  "cd backend && npm install"
+]
 
 [start]
 cmd = "cd backend && npm start"

@@ -187,6 +187,14 @@ const startServer = async () => {
     await waitForDatabase();
     
     console.log('✅ Conexión a MySQL establecida correctamente.');
+    
+    // Intentar inicializar base de datos desde archivo SQL
+    const { initDatabase } = require('./scripts/init-database');
+    const sqlImported = await initDatabase();
+    
+    if (!sqlImported) {
+      console.log('⚠️ No se pudo importar desde SQL, continuando con sincronización normal...');
+    }
 
     // Sincronizar modelos (sin forzar en producción)
     const forceSync = process.env.NODE_ENV === 'development' ? false : false;
