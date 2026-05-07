@@ -40,17 +40,19 @@ module.exports = {
     }
   },
   production: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
+    username: process.env.DB_USER || process.env.RAILWAY_PRIVATE_MYSQL_USER,
+    password: process.env.DB_PASSWORD || process.env.RAILWAY_PRIVATE_MYSQL_PASSWORD,
+    database: process.env.DB_NAME || process.env.RAILWAY_PRIVATE_MYSQL_DATABASE,
+    host: process.env.DB_HOST || process.env.RAILWAY_PRIVATE_MYSQL_HOST,
+    port: process.env.DB_PORT || process.env.RAILWAY_PRIVATE_MYSQL_PORT || 3306,
     dialect: 'mysql',
     dialectOptions: {
       authPlugins: {
         mysql_native_password: true
-      }
+      },
+      ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
     },
-    logging: false,
+    logging: console.log,
     pool: {
       max: 10,
       min: 0,
