@@ -4,10 +4,25 @@ const { sequelize } = require('./models');
 const waitForDatabase = async (maxRetries = 10, delay = 5000) => {
   console.log('🔄 Esperando a que la base de datos esté disponible...');
   
+  // Debug: Mostrar todas las variables de entorno relevantes
+  console.log('🔍 Variables de entorno disponibles:');
+  console.log('MYSQL_URL:', process.env.MYSQL_URL ? '***CONFIGURADO***' : 'NO DEFINIDO');
+  console.log('DB_HOST:', process.env.DB_HOST || 'NO DEFINIDO');
+  console.log('DB_PORT:', process.env.DB_PORT || 'NO DEFINIDO');
+  console.log('DB_NAME:', process.env.DB_NAME || 'NO DEFINIDO');
+  console.log('DB_USER:', process.env.DB_USER || 'NO DEFINIDO');
+  console.log('DB_PASSWORD:', process.env.DB_PASSWORD ? '***CONFIGURADO***' : 'NO DEFINIDO');
+  console.log('RAILWAY_PRIVATE_MYSQL_HOST:', process.env.RAILWAY_PRIVATE_MYSQL_HOST || 'NO DEFINIDO');
+  console.log('RAILWAY_PRIVATE_MYSQL_PORT:', process.env.RAILWAY_PRIVATE_MYSQL_PORT || 'NO DEFINIDO');
+  console.log('RAILWAY_PRIVATE_MYSQL_DATABASE:', process.env.RAILWAY_PRIVATE_MYSQL_DATABASE || 'NO DEFINIDO');
+  console.log('RAILWAY_PRIVATE_MYSQL_USER:', process.env.RAILWAY_PRIVATE_MYSQL_USER || 'NO DEFINIDO');
+  console.log('RAILWAY_PRIVATE_MYSQL_PASSWORD:', process.env.RAILWAY_PRIVATE_MYSQL_PASSWORD ? '***CONFIGURADO***' : 'NO DEFINIDO');
+  
   // Verificar si tenemos MYSQL_URL o variables individuales
   if (process.env.MYSQL_URL) {
     console.log('🔗 Usando MYSQL_URL para conexión');
     console.log('MYSQL_URL:', process.env.MYSQL_URL.replace(/\/\/.*@/, '//***:***@')); // Ocultar credenciales
+    console.log('✅ Configuración de base de datos válida via MYSQL_URL');
   } else {
     // Verificar variables de entorno individuales
     const dbHost = process.env.DB_HOST || process.env.RAILWAY_PRIVATE_MYSQL_HOST;
@@ -26,6 +41,7 @@ const waitForDatabase = async (maxRetries = 10, delay = 5000) => {
     if (!dbHost || !dbPort || !dbName || !dbUser || !dbPassword) {
       throw new Error('❌ Faltan variables de entorno de la base de datos. Revisa la configuración en Railway Dashboard.');
     }
+    console.log('✅ Configuración de base de datos válida via variables individuales');
   }
   
   for (let i = 0; i < maxRetries; i++) {
