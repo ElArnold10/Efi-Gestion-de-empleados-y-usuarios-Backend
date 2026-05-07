@@ -1,0 +1,9 @@
+# Variables de entorno requeridas para Railway
+NODE_ENV=production
+JWT_SECRET=tu_secreto_super_seguro_para_jwt_cambiar_esto
+JWT_EXPIRES_IN=24h
+BCRYPT_ROUNDS=10
+
+# SendGrid (opcional)
+# SENDGRID_API_KEY=SG.your_api_key_here
+# SENDGRID_FROM_EMAIL=tu_email@example.com

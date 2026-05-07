@@ -180,6 +180,14 @@ app.use(errorHandler);
 // Función para iniciar el servidor
 const startServer = async () => {
   try {
+    // Debug: Mostrar variables de entorno
+    console.log('🔍 Variables de entorno:');
+    console.log('DB_HOST:', process.env.DB_HOST);
+    console.log('DB_PORT:', process.env.DB_PORT);
+    console.log('DB_NAME:', process.env.DB_NAME);
+    console.log('DB_USER:', process.env.DB_USER);
+    console.log('DB_PASSWORD:', process.env.DB_PASSWORD ? '***' : 'undefined');
+    
     // Sincronizar base de datos
     await sequelize.authenticate();
     console.log('✅ Conexión a MySQL establecida correctamente.');
