@@ -29,8 +29,14 @@ const waitForDatabase = async (maxRetries = 10, delay = 5000) => {
     
     // Parsear MYSQL_URL para obtener componentes
     try {
-      const mysqlUrl = process.env.MYSQL_URL;
-      console.log('🔍 MYSQL_URL completa:', mysqlUrl);
+      let mysqlUrl = process.env.MYSQL_URL;
+      console.log('🔍 MYSQL_URL original:', mysqlUrl);
+      
+      // Limpiar la URL si viene con prefijo
+      if (mysqlUrl && mysqlUrl.startsWith('MYSQL_URL=')) {
+        mysqlUrl = mysqlUrl.replace('MYSQL_URL=', '');
+        console.log('🔧 MYSQL_URL limpiada:', mysqlUrl);
+      }
       
       if (!mysqlUrl || mysqlUrl.trim() === '') {
         throw new Error('MYSQL_URL está vacía o no definida');
