@@ -91,14 +91,25 @@ const waitForDatabase = async (maxRetries = 10, delay = 5000) => {
         : `a ${dbHost}:${dbPort}/${dbName}`;
       console.log(`🔍 Intento ${i + 1}/${maxRetries} - Conectando ${connectionInfo}...`);
       
-      // Intentar conectar
+      // Primero probar conexión directa MySQL
+      const { testConnection } = require('./test-connection');
+      try {
+        const workingUrl = await testConnection();
+        console.log('✅ Conexión directa MySQL funcionó');
+      } catch (testError) {
+        console.log('❌ Conexión directa MySQL falló:', testError.message);
+      }
+      
+      // Intentar conectar con Sequelize
       await sequelize.authenticate();
-      console.log('✅ Base de datos conectada exitosamente');
+      console.log('✅ Base de datos conectada exitosamente con Sequelize');
       return true;
     } catch (error) {
       console.log(`❌ Intento ${i + 1} fallido: ${error.message}`);
       console.log(`   Código de error: ${error.code || 'N/A'}`);
       console.log(`   Error padre: ${error.parent?.message || 'N/A'}`);
+      console.log(`   Error completo:`, error);
+      console.log(`   Stack:`, error.stack);
       
       if (i < maxRetries - 1) {
         console.log(`⏳ Esperando ${delay/1000} segundos antes del siguiente intento...`);
