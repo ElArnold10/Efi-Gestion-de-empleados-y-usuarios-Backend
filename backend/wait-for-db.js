@@ -1,7 +1,7 @@
 const mysql = require('mysql2/promise');
 const { sequelize } = require('./models');
 
-const waitForDatabase = async (maxRetries = 10, delay = 5000) => {
+const waitForDatabase = async (maxRetries = 1, delay = 5000) => {
   console.log('🔄 Esperando a que la base de datos esté disponible...');
   
   // Debug: Mostrar todas las variables de entorno relevantes
