@@ -95,14 +95,16 @@ module.exports = {
             authPlugins: {
               mysql_native_password: true
             },
-            ssl: { rejectUnauthorized: false }
+            ssl: { rejectUnauthorized: false },
+            connectTimeout: 60000
           },
           logging: console.log,
           pool: {
             max: 10,
             min: 0,
-            acquire: 30000,
-            idle: 10000
+            acquire: 60000,
+            idle: 10000,
+            evict: 1000
           }
         };
       }
