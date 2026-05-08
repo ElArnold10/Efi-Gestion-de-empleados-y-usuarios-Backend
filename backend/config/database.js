@@ -5,16 +5,36 @@ const parseMySqlUrl = (url) => {
   if (!url) return null;
   
   try {
-    const parsed = new URL(url);
-    return {
+    // Limpiar URL si viene con prefijo
+    let cleanUrl = url;
+    if (url.startsWith('MYSQL_URL=')) {
+      cleanUrl = url.replace('MYSQL_URL=', '');
+    }
+    
+    console.log('🔧 Sequelize - URL original:', url);
+    console.log('🔧 Sequelize - URL limpiada:', cleanUrl);
+    
+    const parsed = new URL(cleanUrl);
+    const config = {
       host: parsed.hostname,
       port: parsed.port || 3306,
       database: parsed.pathname.substring(1), // Remove leading /
       username: parsed.username,
       password: parsed.password
     };
+    
+    console.log('✅ Sequelize - Config parseada:', {
+      host: config.host,
+      port: config.port,
+      database: config.database,
+      username: config.username,
+      password: config.password ? '***CONFIGURADO***' : 'NO DEFINIDO'
+    });
+    
+    return config;
   } catch (error) {
-    console.error('Error parsing MYSQL_URL:', error.message);
+    console.error('❌ Sequelize - Error parsing MYSQL_URL:', error.message);
+    console.error('❌ Sequelize - URL que causó error:', url);
     return null;
   }
 };
