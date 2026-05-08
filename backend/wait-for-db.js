@@ -100,10 +100,36 @@ const waitForDatabase = async (maxRetries = 1, delay = 5000) => {
         console.log('❌ Conexión directa MySQL falló:', testError.message);
       }
       
-      // Intentar conectar con Sequelize
-      await sequelize.authenticate();
-      console.log('✅ Base de datos conectada exitosamente con Sequelize');
-      return true;
+      // Intentar conectar con Sequelize usando la misma configuración que funciona
+      try {
+        // Forzar recarga de configuración de Sequelize
+        const { Sequelize } = require('sequelize');
+        
+        // Usar la URL limpia directamente
+        let mysqlUrl = process.env.MYSQL_URL;
+        if (mysqlUrl && mysqlUrl.startsWith('MYSQL_URL=')) {
+          mysqlUrl = mysqlUrl.replace('MYSQL_URL=', '');
+        }
+        
+        console.log('🔧 Sequelize - Forzando conexión directa con URL:', mysqlUrl.replace(/\/\/.*@/, '//***:***@'));
+        
+        const sequelizeDirect = new Sequelize(mysqlUrl, {
+          dialect: 'mysql',
+          logging: false,
+          dialectOptions: {
+            connectTimeout: 60000,
+            ssl: { rejectUnauthorized: false }
+          }
+        });
+        
+        await sequelizeDirect.authenticate();
+        console.log('✅ Base de datos conectada exitosamente con Sequelize directo');
+        return true;
+        
+      } catch (sequelizeError) {
+        console.log('❌ Sequelize directo falló:', sequelizeError.message);
+        throw sequelizeError;
+      }
     } catch (error) {
       console.log(`❌ Intento ${i + 1} fallido: ${error.message}`);
       console.log(`   Código de error: ${error.code || 'N/A'}`);
