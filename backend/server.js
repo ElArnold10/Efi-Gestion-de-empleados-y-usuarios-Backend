@@ -209,10 +209,10 @@ const startServer = async () => {
       console.log('⚠️ No se pudo importar desde SQL, continuando con sincronización normal...');
     }
 
-    // Sincronizar modelos (sin forzar en producción)
-    const forceSync = process.env.NODE_ENV === 'development' ? false : false;
-    // await sequelize.sync({ alter: true, force: forceSync });
-    console.log('⚠️ Sincronización de modelos desactivada temporalmente.');
+    // Sincronizar modelos (crear tablas si no existen)
+    console.log('🔄 Sincronizando base de datos...');
+    await sequelize.sync({ alter: false, force: false });
+    console.log('✅ Base de datos sincronizada correctamente.');
 
     // Crear usuario admin por defecto si no existe
     const { User } = require('./models');
