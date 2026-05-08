@@ -7,6 +7,10 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { sequelize } = require('./models');
 
+// Forzar NODE_ENV a production para asegurar configuración correcta
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+console.log('🔧 NODE_ENV forzado a:', process.env.NODE_ENV);
+
 // Importar middlewares
 const { 
   corsOptions, 
@@ -182,6 +186,15 @@ app.use(errorHandler);
 // Función para iniciar el servidor
 const startServer = async () => {
   try {
+    // Mostrar configuración de Sequelize antes de conectar
+    console.log('🔍 Configuración actual de Sequelize:');
+    console.log('  Dialect:', sequelize.config.dialect);
+    console.log('  Host:', sequelize.config.host);
+    console.log('  Port:', sequelize.config.port);
+    console.log('  Database:', sequelize.config.database);
+    console.log('  Username:', sequelize.config.username);
+    console.log('  NODE_ENV:', process.env.NODE_ENV);
+    
     // Esperar a que la base de datos esté disponible
     const { waitForDatabase } = require('./wait-for-db');
     await waitForDatabase();
