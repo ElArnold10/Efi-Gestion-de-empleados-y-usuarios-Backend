@@ -111,7 +111,12 @@ const waitForDatabase = async (maxRetries = 1, delay = 5000) => {
           mysqlUrl = mysqlUrl.replace('MYSQL_URL=', '');
         }
         
-        console.log('🔧 Sequelize - Forzando conexión directa con URL:', mysqlUrl.replace(/\/\/.*@/, '//***:***@'));
+        if (mysqlUrl) {
+          console.log('🔧 Sequelize - Forzando conexión directa con URL:', mysqlUrl.replace(/\/\/.*@/, '//***:***@'));
+        } else {
+          console.log('🔧 Sequelize - MYSQL_URL no está definida, usando configuración individual');
+          mysqlUrl = `mysql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
+        }
         
         const sequelizeDirect = new Sequelize(mysqlUrl, {
           dialect: 'mysql',
