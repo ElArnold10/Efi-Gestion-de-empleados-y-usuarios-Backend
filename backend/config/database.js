@@ -88,9 +88,10 @@ module.exports = {
   },
   production: (() => {
     // Prioridad 1: Usar MYSQL_URL si está disponible
-    if (process.env.MYSQL_URL) {
+    if (process.env.MYSQL_URL || process.env.MYSQL_PUBLIC_URL) {
+      const mysqlUrl = process.env.MYSQL_URL || process.env.MYSQL_PUBLIC_URL;
       console.log('🔗 Usando MYSQL_URL para conexión a base de datos');
-      const parsed = parseMySqlUrl(process.env.MYSQL_URL);
+      const parsed = parseMySqlUrl(mysqlUrl);
       if (parsed) {
         return {
           username: parsed.username,
@@ -121,11 +122,11 @@ module.exports = {
     // Prioridad 2: Usar variables Railway individuales
     console.log('🔧 Usando variables de entorno individuales para conexión');
     return {
-      username: process.env.DB_USER || process.env.RAILWAY_PRIVATE_MYSQL_USER,
-      password: process.env.DB_PASSWORD || process.env.RAILWAY_PRIVATE_MYSQL_PASSWORD,
-      database: process.env.DB_NAME || process.env.RAILWAY_PRIVATE_MYSQL_DATABASE,
-      host: process.env.DB_HOST || process.env.RAILWAY_PRIVATE_MYSQL_HOST,
-      port: process.env.DB_PORT || process.env.RAILWAY_PRIVATE_MYSQL_PORT || 3306,
+      username: process.env.DB_USER || process.env.RAILWAY_PRIVATE_MYSQL_USER || process.env.MYSQLUSER,
+      password: process.env.DB_PASSWORD || process.env.RAILWAY_PRIVATE_MYSQL_PASSWORD || process.env.MYSQLPASSWORD || process.env.MYSQL_ROOT_PASSWORD,
+      database: process.env.DB_NAME || process.env.RAILWAY_PRIVATE_MYSQL_DATABASE || process.env.MYSQLDATABASE || process.env.MYSQL_DATABASE,
+      host: process.env.DB_HOST || process.env.RAILWAY_PRIVATE_MYSQL_HOST || process.env.MYSQLHOST || process.env.RAILWAY_PRIVATE_DOMAIN,
+      port: process.env.DB_PORT || process.env.RAILWAY_PRIVATE_MYSQL_PORT || process.env.MYSQLPORT || 3306,
       dialect: 'mysql',
       dialectOptions: {
         authPlugins: {
