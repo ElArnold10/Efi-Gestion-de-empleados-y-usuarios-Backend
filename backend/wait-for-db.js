@@ -38,8 +38,17 @@ const waitForDatabase = async (maxRetries = 1, delay = 5000) => {
         console.log('🔧 MYSQL_URL limpiada:', mysqlUrl);
       }
       
+      // Limpiar espacios y comillas
+      mysqlUrl = mysqlUrl.trim();
+      mysqlUrl = mysqlUrl.replace(/^["']|["']$/g, '');
+      
       if (!mysqlUrl || mysqlUrl.trim() === '') {
         throw new Error('MYSQL_URL está vacía o no definida');
+      }
+      
+      // Asegurar protocolo correcto
+      if (!mysqlUrl.startsWith('mysql://')) {
+        mysqlUrl = 'mysql://' + mysqlUrl;
       }
       
       const parsed = new URL(mysqlUrl);
@@ -61,7 +70,20 @@ const waitForDatabase = async (maxRetries = 1, delay = 5000) => {
       console.log('  URL recibida:', process.env.MYSQL_URL);
       console.log('  Error:', error.message);
       console.log('  Código error:', error.code);
-      throw new Error('❌ Error al parsear MYSQL_URL: ' + error.message + ' | URL: ' + process.env.MYSQL_URL);
+      console.log('⚠️ Usando variables individuales como fallback...');
+      // No lanzar error, usar variables individuales como fallback
+      dbHost = process.env.DB_HOST || process.env.RAILWAY_PRIVATE_MYSQL_HOST;
+      dbPort = process.env.DB_PORT || process.env.RAILWAY_PRIVATE_MYSQL_PORT;
+      dbName = process.env.DB_NAME || process.env.RAILWAY_PRIVATE_MYSQL_DATABASE;
+      dbUser = process.env.DB_USER || process.env.RAILWAY_PRIVATE_MYSQL_USER;
+      dbPassword = process.env.DB_PASSWORD || process.env.RAILWAY_PRIVATE_MYSQL_PASSWORD;
+      
+      console.log('🔍 Configuración de base de datos (fallback variables individuales):');
+      console.log('HOST:', dbHost || 'NO DEFINIDO');
+      console.log('PORT:', dbPort || 'NO DEFINIDO');
+      console.log('DATABASE:', dbName || 'NO DEFINIDO');
+      console.log('USER:', dbUser || 'NO DEFINIDO');
+      console.log('PASSWORD:', dbPassword ? '***CONFIGURADO***' : 'NO DEFINIDO');
     }
   } else {
     // Usar variables de entorno individuales
@@ -82,6 +104,11 @@ const waitForDatabase = async (maxRetries = 1, delay = 5000) => {
       throw new Error('❌ Faltan variables de entorno de la base de datos. Revisa la configuración en Railway Dashboard.');
     }
     console.log('✅ Configuración de base de datos válida via variables individuales');
+  }
+  
+  // Validar que tenemos todas las variables necesarias
+  if (!dbHost || !dbPort || !dbName || !dbUser || !dbPassword) {
+    throw new Error('❌ Faltan variables de entorno de la base de datos. Revisa la configuración en Railway Dashboard.');
   }
   
   for (let i = 0; i < maxRetries; i++) {
@@ -111,7 +138,16 @@ const waitForDatabase = async (maxRetries = 1, delay = 5000) => {
           mysqlUrl = mysqlUrl.replace('MYSQL_URL=', '');
         }
         
+        // Limpiar espacios y comillas
         if (mysqlUrl) {
+          mysqlUrl = mysqlUrl.trim();
+          mysqlUrl = mysqlUrl.replace(/^["']|["']$/g, '');
+          
+          // Asegurar protocolo correcto
+          if (!mysqlUrl.startsWith('mysql://')) {
+            mysqlUrl = 'mysql://' + mysqlUrl;
+          }
+          
           console.log('🔧 Sequelize - Forzando conexión directa con URL:', mysqlUrl.replace(/\/\/.*@/, '//***:***@'));
         } else {
           console.log('🔧 Sequelize - MYSQL_URL no está definida, usando configuración individual');
