@@ -197,7 +197,7 @@ const startServer = async () => {
     
     // Esperar a que la base de datos esté disponible
     const { waitForDatabase } = require('./wait-for-db');
-    await waitForDatabase();
+    await waitForDatabase(5, 5000);
     
     console.log('✅ Conexión a MySQL establecida correctamente.');
     
