@@ -16,7 +16,6 @@ if (process.env.MYSQL_URL) {
   console.log('🔧 Models - Usando MYSQL_URL directa:', mysqlUrl.replace(/\/\/.*@/, '//***:***@'));
   
   sequelize = new Sequelize(mysqlUrl, {
-    dialect: 'mysql',
     logging: false,
     dialectOptions: {
       connectTimeout: 60000,
