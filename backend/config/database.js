@@ -6,9 +6,17 @@ const parseMySqlUrl = (url) => {
   
   try {
     // Limpiar URL si viene con prefijo
-    let cleanUrl = url;
-    if (url.startsWith('MYSQL_URL=')) {
-      cleanUrl = url.replace('MYSQL_URL=', '');
+    let cleanUrl = url.trim();
+    if (cleanUrl.startsWith('MYSQL_URL=')) {
+      cleanUrl = cleanUrl.replace('MYSQL_URL=', '').trim();
+    }
+    
+    // Remover comillas si existen
+    cleanUrl = cleanUrl.replace(/^["']|["']$/g, '');
+    
+    // Asegurar que tenga el protocolo correcto
+    if (!cleanUrl.startsWith('mysql://')) {
+      cleanUrl = 'mysql://' + cleanUrl;
     }
     
     console.log('🔧 Sequelize - URL original:', url);

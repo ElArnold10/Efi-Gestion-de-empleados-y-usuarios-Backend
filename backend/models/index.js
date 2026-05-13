@@ -6,41 +6,20 @@ const dbConfig = config[env];
 
 let sequelize;
 
-// Si tenemos MYSQL_URL, usarla directamente (más robusto)
-if (process.env.MYSQL_URL) {
-  let mysqlUrl = process.env.MYSQL_URL;
-  if (mysqlUrl.startsWith('MYSQL_URL=')) {
-    mysqlUrl = mysqlUrl.replace('MYSQL_URL=', '');
-  }
-  
-  console.log('🔧 Models - Usando MYSQL_URL directa:', mysqlUrl.replace(/\/\/.*@/, '//***:***@'));
-  
-  sequelize = new Sequelize(mysqlUrl, {
-    logging: false,
-    dialectOptions: {
-      connectTimeout: 60000,
-      ssl: { rejectUnauthorized: false }
-    },
-    pool: {
-      max: 10,
-      min: 0,
-      acquire: 60000,
-      idle: 10000
-    }
-  });
-} else {
-  console.log('🔧 Models - Usando configuración tradicional');
-  
-  // Crear instancia de Sequelize
-  sequelize = new Sequelize(
-    dbConfig.database,
-    dbConfig.username,
-    dbConfig.password,
-    {
-      host: dbConfig.host,
-      dialect: dbConfig.dialect,
-      logging: dbConfig.logging,
-      pool: dbConfig.pool,
+console.log('🔧 Models - Usando configuración de database.js');
+
+// Crear instancia de Sequelize usando la configuración de database.js
+sequelize = new Sequelize(
+  dbConfig.database,
+  dbConfig.username,
+  dbConfig.password,
+  {
+    host: dbConfig.host,
+    port: dbConfig.port,
+    dialect: dbConfig.dialect,
+    logging: dbConfig.logging,
+    dialectOptions: dbConfig.dialectOptions,
+    pool: dbConfig.pool,
     define: {
       underscored: true,
       freezeTableName: true,
@@ -48,8 +27,7 @@ if (process.env.MYSQL_URL) {
       collate: 'utf8mb4_unicode_ci'
     }
   }
-  );
-}
+);
 
 // Importar modelos
 const User = require('./User')(sequelize);
